@@ -1,0 +1,30 @@
+[DONE?] PRIORITY 1 (core):
+    [DONE?] Create final list of hand strengths
+        [DONE?] Modify flopeval for final list
+
+PRIORITY 2 (UI):
+    Validate form input
+    Write answer marker
+    Design nice layout
+
+PRIORITY 3:
+    Allow selecting of range
+    Allow selecting of hand strengths to be tested on
+    Random flop generator
+    Publish public alpha
+
+PRIORITY 4:
+    Create strength matrix for results page
+    Add countdown timer
+    Add save-able defaults
+
+PRIORITY 5:
+    Create account system
+    Save results
+
+PRIORITY 7:
+    Allow hero hand selection
+        Random hero hand generator within a given range
+
+PRIORITY 8:
+    Begin work on flop grouper

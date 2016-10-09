@@ -1,0 +1,43 @@
+<html>
+<head>
+<title>combo trainer</title>
+<style>
+div.straightflush {
+  background-color: linen;
+}
+div.quads {
+  background-color: yellow;
+}
+div.fullhouse {
+  background-color: green;
+}
+div.straight {
+  background-color: orange;
+}
+div.flush {
+  background-color: lightgrey;
+}
+div.trips {
+  background-color: pink;
+}
+div.twopair {
+  background-color: red;
+}
+div.pair {
+  background-color: grey;
+}
+div.highcard {
+  background-color: purple;
+}
+</style>
+</head>
+<body>
+<form method="post" action="/comboresults">
+    {{ form.csrf_token }}
+    {% for combo in form.combos %}
+        {{ combo(size='4', autocomplete='off') }} {{ hands[loop.index0] }} <br>
+    {% endfor %}
+    <input type=submit value=results>
+</form>
+</body>
+</html>

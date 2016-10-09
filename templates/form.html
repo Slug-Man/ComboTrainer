@@ -1,0 +1,49 @@
+<html>
+<head>
+<title>combo trainer</title>
+<style>
+div.straightflush {
+  background-color: linen;
+}
+div.quads {
+  background-color: yellow;
+}
+div.fullhouse {
+  background-color: green;
+}
+div.straight {
+  background-color: orange;
+}
+div.flush {
+  background-color: lightgrey;
+}
+div.trips {
+  background-color: pink;
+}
+div.twopair {
+  background-color: red;
+}
+div.pair {
+  background-color: grey;
+}
+div.highcard {
+  background-color: purple;
+}
+</style>
+</head>
+<body>
+<form method="post" action="/results">
+Flop Cards:
+<input type="text" name="flop1" size=2 autocomplete="off">
+<input type="text" name="flop2" size=2 autocomplete="off">
+<input type="text" name="flop3" size=2 autocomplete="off">
+<br>
+
+{% for h in hands %}
+<input type="test" name="{{ loop.index0 }}" size="2" autocomplete="off">{{ h }}<br>
+{% endfor %}
+
+<input type=submit value=results>
+</form>
+</body>
+</html>
