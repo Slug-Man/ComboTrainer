@@ -1,6 +1,9 @@
 import numpy
 
 from constants import HANDS_VALUE
+from itertools import combinations
+
+from deck import Deck
 
 
 class FlopEvaluator:
@@ -129,23 +132,27 @@ class FlopEvaluator:
                 return False
         return True
 
+    @staticmethod
+    def evaluate_for_range(board, range=None):
+        # range isn't used atm. Uses all possible 2-card combos
+        results_dict = {}
+
+        for c1, c2 in combinations(Deck(remove=board).cards, 2):
+            temp_result = FlopEvaluator.evaluate(board, [c1, c2])
+            try:
+                results_dict[temp_result] += 1
+            except KeyError:
+                results_dict[temp_result] = 1
+
+        return results_dict
+
 
 if __name__ == '__main__':
-    from itertools import combinations
     from card import Card
-    from deck import Deck
+    from constants import HANDS
     import time
     from itertools import count
 
-    #f1, f2, f3 = Card.new('Th'), Card.new('8h'), Card.new('9d')
-    t = time.time()
-    counter = count()
-    for f1, f2, f3 in combinations(Deck().cards, 3):
-        for c1, c2 in combinations(Deck(remove=[f1, f2, f3]).cards, 2):
-            result = FlopEvaluator.evaluate([f1, f2, f3], [c1, c2])
-            #print FlopEvaluator.evaluate([f1, f2, f3], [c1, c2]),
-            #print "[%s %s]" % (Card.get_str(c1), Card.get_str(c2))
-            #counter.next()
-        #   print "%s%s%s" % (Card.get_str(f1), Card.get_str(f2), Card.get_str(f3)), time.time()-t
-
-    print time.time()-t
+    aaa = FlopEvaluator.evaluate_for_range([Card.new('As'), Card.new('Ac'), Card.new('Ad')])
+    for v in aaa:
+        print HANDS[v], '-', aaa[v]

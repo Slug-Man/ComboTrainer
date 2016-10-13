@@ -3,8 +3,16 @@
 <title>results - combo trainer</title>
 </head>
 <body>
-{% for r in results %}
-    {{ r }} {{ hands[loop.index0] }}<br>
+{{ flop1 }} {{ flop2 }} {{ flop3 }}<br>
+{% for r in results -%}
+    {% if r == combos[loop.index0]|default(0) %}
+        {% set results_color = 'green' %}
+    {% else %}
+        {% set results_color = 'red' %}
+    {% endif %}
+    <span style="color:{{ results_color }}">
+        {{ r }} ({{ combos[loop.index0]|default('0') }}) {{ hands[loop.index0] }}
+    </span><br>
 {% endfor %}
 </body>
 </html>

@@ -23,7 +23,18 @@ def combo():
 def combo_results():
     form = ComboForm()
     if form.validate():
-        return render_template('results2.html', results=field_values_to_list(form['combos']), hands=HANDS)
+        return render_template('results2.html',
+                               flop1=form['flop1'].data,
+                               flop2=form['flop2'].data,
+                               flop3=form['flop3'].data,
+                               results=field_values_to_list(form['combos']),
+                               hands=HANDS,
+                               combos=FlopEvaluator.evaluate_for_range(
+                                   [Card.new(form['flop1'].data),
+                                    Card.new(form['flop2'].data),
+                                    Card.new(form['flop3'].data)]
+                               )
+                           )
     return 'error'
 
 
