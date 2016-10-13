@@ -134,10 +134,18 @@ if __name__ == '__main__':
     from itertools import combinations
     from card import Card
     from deck import Deck
+    import time
+    from itertools import count
 
-    f1, f2, f3 = Card.new('Th'), Card.new('8h'), Card.new('9d')
+    #f1, f2, f3 = Card.new('Th'), Card.new('8h'), Card.new('9d')
+    t = time.time()
+    counter = count()
+    for f1, f2, f3 in combinations(Deck().cards, 3):
+        for c1, c2 in combinations(Deck(remove=[f1, f2, f3]).cards, 2):
+            result = FlopEvaluator.evaluate([f1, f2, f3], [c1, c2])
+            #print FlopEvaluator.evaluate([f1, f2, f3], [c1, c2]),
+            #print "[%s %s]" % (Card.get_str(c1), Card.get_str(c2))
+            #counter.next()
+        #   print "%s%s%s" % (Card.get_str(f1), Card.get_str(f2), Card.get_str(f3)), time.time()-t
 
-    for c1, c2 in combinations(Deck(remove=[f1, f2, f3]).cards, 2):
-        result = FlopEvaluator.evaluate([f1, f2, f3], [c1, c2])
-        print FlopEvaluator.evaluate([f1, f2, f3], [c1, c2]),
-        print "[%s %s]" % (Card.get_str(c1), Card.get_str(c2))
+    print time.time()-t
