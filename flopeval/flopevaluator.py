@@ -133,11 +133,25 @@ class FlopEvaluator:
         return True
 
     @staticmethod
-    def evaluate_for_range(board, range=None):
-        # range isn't used atm. Uses all possible 2-card combos
+    def evaluate_for_range(board, pocket_combos=None):
+        """
+        Computes total number of combos of each hand strength for a given range and community board.
+        
+        WARNING! board and pocket_combos must not share any common card ints.
+        
+        :param board: list of three card ints representing the flop.
+        :param pocket_combos: list of lists of two card ints (see hand_range_to_cards() in rangeparser.py). Defaults to
+            whole deck.
+        :return: dict where hand strength (represented by an int -- see constants.py) is mapped to number of combos.
+        """
+        # TODO: some way handle card int duplicates in board and pocket_combos
+
+        if pocket_combos is None:
+            pocket_combos = combinations(Deck(remove=board).cards, 2)
+
         results_dict = {}
 
-        for c1, c2 in combinations(Deck(remove=board).cards, 2):
+        for c1, c2 in pocket_combos:
             temp_result = FlopEvaluator.evaluate(board, [c1, c2])
             try:
                 results_dict[temp_result] += 1
@@ -152,7 +166,16 @@ if __name__ == '__main__':
     from constants import HANDS
     import time
     from itertools import count
+    from rangeparser import hand_range_to_cards, hand_ints_to_str
 
-    aaa = FlopEvaluator.evaluate_for_range([Card.new('As'), Card.new('Ac'), Card.new('Ad')])
+    flop = [Card.new('As'), Card.new('Ac'), Card.new('Ad')]
+
+    aaa = FlopEvaluator.evaluate_for_range(flop)
+    print 'flop: AsAcAd range: random'
     for v in aaa:
         print HANDS[v], '-', aaa[v]
+
+    ttp = FlopEvaluator.evaluate_for_range(flop, hand_range_to_cards('22+,A2s+,A2o+', flop))
+    print 'flop: AsAcAd range: 22+,A2s+,A2o+'
+    for v in ttp:
+        print HANDS[v], '-', ttp[v]
