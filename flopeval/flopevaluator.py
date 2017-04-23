@@ -1,6 +1,6 @@
 import numpy
 
-from constants import HANDS_VALUE
+from constants import HANDS_VALUE, HANDS
 from itertools import combinations
 
 from deck import Deck
@@ -161,12 +161,19 @@ class FlopEvaluator:
         return results_dict
 
 
+def prettify_eval_results(results):
+    pretty_results = {}
+    for k, v in results.iteritems():
+        # TODO int() is a hack for distinctflops.py pls remove
+        pretty_results[HANDS[int(k)]] = v
+    return pretty_results
+
 if __name__ == '__main__':
     from card import Card
     from constants import HANDS
     import time
     from itertools import count
-    from rangeparser import hand_range_to_cards, hand_ints_to_str
+    from rangeparser import hand_range_to_cards, card_ints_to_str
 
     flop = [Card.new('As'), Card.new('Ac'), Card.new('Ad')]
 
