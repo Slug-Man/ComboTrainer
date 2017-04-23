@@ -93,20 +93,23 @@ def _comboify_hand(hand):
 def _combo_to_hand(combo):
     return [Card.new(combo[:2]), Card.new(combo[2:])]
 
-def hand_ints_to_str(hands):
-    return ['%s%s' % (Card.get_str(h[0]), Card.get_str(h[1])) for h in hands]
+def card_ints_to_str(cards):
+    buildstring = []
+    for c in cards:
+        buildstring.append(Card.get_str(c))
+    return "".join(buildstring)
 
 if __name__ == '__main__':
     print _comboify_hand('KJs')
     print _comboify_hand('KJo')
     print _comboify_hand('66')
 
-    print hand_ints_to_str(hand_range_to_cards('random'))
+    print card_ints_to_str(hand_range_to_cards('random'))
 
     tt = hand_range_to_cards('TT+')
-    for t in hand_ints_to_str(tt):
+    for t in card_ints_to_str(tt):
         print t,
     print
 
     flop = [Card.new('As'), Card.new('Ac'), Card.new('Ad')]
-    print hand_ints_to_str(hand_range_to_cards('TT+', flop))
+    print card_ints_to_str(hand_range_to_cards('TT+', flop))
