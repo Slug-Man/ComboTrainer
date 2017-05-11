@@ -4,16 +4,19 @@ import std.process;
 void main()
 {
 	auto ip = executeShell("hostname -i");
+
 	auto settings = new HTTPServerSettings;
 	settings.port = 8080;
 	settings.bindAddresses = [ip.output.chomp];
-	listenHTTP(settings, &hello);
 
-	logInfo("Please open http://%s:8080/ in your browser.".format(ip.output.chomp));
+	auto router = new URLRouter;
+	router.get("/", &index);
+
+	listenHTTP(settings, router);
 	runApplication();
 }
 
-void hello(HTTPServerRequest req, HTTPServerResponse res)
+void index(HTTPServerRequest req, HTTPServerResponse res)
 {
-	res.writeBody("Hello, World!");
+	res.render!("index.dt", req);
 }
