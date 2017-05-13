@@ -1,0 +1,11 @@
+#!/bin/bash
+cleanup () {
+  pkill backend
+}
+trap cleanup exit
+while true; do
+  time dub build --build=release --skip-registry=all --nodeps
+  ./backend &
+  inotifywait -e modify,delete --exclude '/\.|/backend' -qr .
+  pkill backend
+done
