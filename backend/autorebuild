@@ -3,6 +3,9 @@ cleanup () {
   pkill backend
 }
 trap cleanup exit
+
+pg_ctl start
+
 while true; do
   time dub build --build=release --skip-registry=all --nodeps
   ./backend &
