@@ -1,4 +1,6 @@
-import sqlite3
+import psycopg2
+import logging
+from psycopg2.extras import LoggingConnection
 
 from flopevaluator import FlopEvaluator, prettify_eval_results
 from rangeparser import hand_range_to_cards, card_ints_to_str
@@ -16,7 +18,7 @@ def name_replace(s):
 sql_statements = {
     "create ranges table": """
 CREATE TABLE IF NOT EXISTS ranges (
-id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+id SERIAL PRIMARY KEY NOT NULL,
 range_label TEXT,
 range_desc TEXT
 )
@@ -30,10 +32,10 @@ range_desc TEXT
             PRIMARY KEY (rangeid, flop)
            )
         """ % ''.join(["%s INTEGER, " % name_replace(s) for s in HANDS]),
-    "insert ranges": "INSERT INTO ranges (range_label, range_desc) VALUES (:range_label, :range_desc)",
+    "insert ranges": "INSERT INTO ranges (range_label, range_desc) VALUES (%(range_label)s, %(range_desc)s) RETURNING id",
     "insert combohashes":
         "INSERT INTO combohashes (rangeid, flop, %s) " % ', '.join(["%s" % name_replace(s) for s in HANDS]) +
-        "VALUES (:rangeid, :flop, " + "%s)" % ', '.join(["%(" + s + ")s" for s in HANDS]),
+        "VALUES (%(rangeid)s, %(flop)s, " + "%s)" % ', '.join(["%(" + s + ")s" for s in HANDS]),
     "select combohashes flop":
         "SELECT * FROM combohashes WHERE combohashes.rangeid='%s' AND combohashes.flop='%s'",
     "select combohashes anyflop": "SELECT * FROM combohashes WHERE combohashes.rangeid='%s'",
@@ -41,13 +43,15 @@ range_desc TEXT
 }
 
 class RangeComboEvaluator:
-    def __init__(self, db=':memory:'):
-        self.db = db
+    def __init__(self):
         self._connect()
 
     def _connect(self):
-        self.conn = sqlite3.connect(self.db)
-        self.conn.execute("PRAGMA foreign_keys=ON;")
+        #logging.basicConfig(level=logging.DEBUG)
+        #logger = logging.getLogger(__name__)
+        #self.conn = psycopg2.connect("", connection_factory=LoggingConnection)
+        #self.conn.initialize(logger)
+        self.conn = psycopg2.connect("")
         self.cursor = self.conn.cursor()
         self.cursor.execute(sql_statements['create ranges table'])
         self.cursor.execute(sql_statements['create combohashes table'])
@@ -59,7 +63,7 @@ class RangeComboEvaluator:
         result = cursor.fetchall()
         if len(result) == 0:
             cursor.execute(sql_statements["insert ranges"], {'range_label': rangename, 'range_desc': range})
-            rangeid = cursor.lastrowid
+            rangeid = cursor.fetchone()[0]
         elif len(result) == 1:
             rangeid = result[0][0]
         for flop in flops:
@@ -72,8 +76,8 @@ class RangeComboEvaluator:
                 continue
             combohash = defaultdict(lambda: 0)
             combohash.update(prettify_eval_results(FlopEvaluator.evaluate_for_range(canonflop, hands)))
-            cursor.execute(sql_statements["insert combohashes"] % combohash, {'rangeid': rangeid,
-                                                                              'flop': card_ints_to_str(canonflop)})
+            combohash.update({'rangeid': rangeid, 'flop': card_ints_to_str(canonflop)})
+            cursor.execute(sql_statements["insert combohashes"], combohash)
         self.conn.commit()
 
     def get_combohashes_for_range(self, rangename):

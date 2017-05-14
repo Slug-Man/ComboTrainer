@@ -14,7 +14,7 @@ if __name__ == '__main__':
         canon_flops.append(canon(flop))
     deduped_flops = sorted(list(set(canon_flops)))
 
-    rceval = RangeComboEvaluator('./sqldb/rceval.db')
+    rceval = RangeComboEvaluator()
     rceval.evaluate_flops_for_range(deduped_flops, utg, 'utg')
     rceval.evaluate_flops_for_range(deduped_flops, hj, 'hj')
     rceval.evaluate_flops_for_range(deduped_flops, co, 'co')
