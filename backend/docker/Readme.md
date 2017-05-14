@@ -14,7 +14,25 @@ How I start it:
 
 ```
 sudo docker start -ai combodev
-cd project/backend
+```
+
+Setting up the database (inside the container):
+
+```
+pg_ctl start
+cd /project/database
+python rangecomboeval_test.py # This fills up the database
+pg_ctl stop
+```
+
+Building dependencies:
+```
 dub build --build=release # run this once to build dependencies
-./autorebuild
+```
+
+Start the web server and auto rebuild:
+
+```
+cd project/backend
+./autorebuild # This should also automatically start postgresql
 ```
