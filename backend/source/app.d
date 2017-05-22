@@ -1,7 +1,10 @@
 import vibe.vibe;
+import vibe.web.rest;
 import std.process;
 import std.format;
 import dpq2;
+
+import problemapi;
 
 void main()
 {
@@ -13,11 +16,10 @@ void main()
 
 	auto router = new URLRouter;
 	router.get("/", &index);
+    router.registerRestInterface(new ProblemAPI);
 
 	listenHTTP(settings, router);
-	auto conn = new Connection("");
-	auto result = conn.exec("select * from ranges where range_label='utg'");
-	logInfo("utg range: %s".format(result[0]["range_desc"].as!PGtext));
+    
 
 	runApplication();
 }
